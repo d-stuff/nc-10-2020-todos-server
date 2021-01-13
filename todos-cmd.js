@@ -1,3 +1,5 @@
 require('./todo-model')
 
-console.log('commands loaded')
+module.exports = function runCommand([ a, b, action, value ]) {
+
+}
