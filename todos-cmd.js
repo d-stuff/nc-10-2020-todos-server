@@ -12,10 +12,12 @@ module.exports = function runCommand([ _, __, action, value = '', extraValue ]) 
 			addTodo(value, extraValue);
 			break;
 		case 'done':
-			setTodoAsDone(value);
-			break
+			setTodoDone(value, true);
+			break;
+		case 'undone':
+			setTodoDone(value, false);
+			break;
 	}
-
 }
 
 async function printFilteredTodos(filterString) {
@@ -46,6 +48,7 @@ async function addTodo(content, extra) {
 	console.table([ newTodo ]);
 }
 
-async function setTodoAsDone(id) {
-
+async function setTodoDone(id, isDone) {
+	const updatedTodo = await service.updateTodo(Number(id), { isDone });
+	console.table([ updatedTodo ]);
 }
