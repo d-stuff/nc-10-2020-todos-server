@@ -52,9 +52,15 @@ async function getTodos(filters = {}) {
 	});
 }
 
+async function getTodo(todoId) {
+	const todos = await getData(TODOS_PATH);
+	return todos.filter(todo => todo.id !== todoId);
+}
+
 module.exports = {
 	addTodo,
 	removeTodo,
 	updateTodo,
-	getTodos
+	getTodos,
+	getTodo
 }

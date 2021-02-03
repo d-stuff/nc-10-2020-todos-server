@@ -1,8 +1,8 @@
 const usersService = require('../services/users');
 
 const checkUserHeaders = (req, res, next) => {
-	if (req.headers.userId) {
-		req.userId = Number(req.headers.userId);
+	if (req.headers.user) {
+		req.userId = Number(req.headers.user);
 		next();
 	} else {
 		res.status(401).json({ message: 'please provide user header' });

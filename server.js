@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 
 const jsonParser = bodyParser.json();
 const service = require('./services/todos');
+const { checkTodoPermissions } = require('./middlewares/todos');
 const { checkUserHeaders, checkExistingUser } = require('./middlewares/auth');
 
 const app = express();
@@ -26,18 +27,18 @@ app.get('/api/todos', async (req, res) => {
 	res.json(todos);
 });
 
-app.delete('/api/todos/:todoId', async (req, res) => {
-	await service.removeTodo(Number(req.params.todoId));
+app.delete('/api/todos/:todoId', checkTodoPermissions, async (req, res) => {
+	await service.removeTodo(req.todo.id);
 	res.json({ message: 'Todo removed successfully' });
 });
 
 app.post('/api/todos', jsonParser, async (req, res) => {
-	const newTodo = await service.addTodo(req.body);
+	const newTodo = await service.addTodo({ ...req.body, userId: req.user.id });
 	res.json(newTodo);
 });
 
-app.put('/api/todos/:todoId', jsonParser, async (req, res) => {
-	const updatedTodo = await service.updateTodo(Number(req.params.todoId), req.body);
+app.put('/api/todos/:todoId', checkTodoPermissions, jsonParser, async (req, res) => {
+	const updatedTodo = await service.updateTodo(req.todo.id, {...req.body, userId: req.user.id});
 	res.json(updatedTodo);
 });
 
