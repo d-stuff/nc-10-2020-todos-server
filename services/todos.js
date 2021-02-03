@@ -1,5 +1,5 @@
-require('./file-db')
-const { getData, setData } = require('./file-db');
+require('../file-db')
+const { getData, setData } = require('../file-db');
 
 const TODOS_PATH = 'todos.json';
 
@@ -43,6 +43,9 @@ async function getTodos(filters = {}) {
 		}
 		if (result && 'id' in filters) {
 			result = todo.id === filters.id;
+		}
+		if (result && 'userId' in filters) {
+			result = todo.userId === filters.userId;
 		}
 
 		return result;

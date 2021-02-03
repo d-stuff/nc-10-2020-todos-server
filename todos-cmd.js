@@ -1,4 +1,4 @@
-const service = require('./todos-service');
+const service = require('./services/todos');
 
 module.exports = function runCommand([ _, __, action, value = '', extraValue ]) {
 	switch (action) {
