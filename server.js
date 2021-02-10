@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+const morgan = require('morgan');
 
 const jsonParser = bodyParser.json();
 const service = require('./services/todos');
@@ -9,6 +11,8 @@ const { checkUserHeaders, checkExistingUser } = require('./middlewares/auth');
 const app = express();
 
 // middleware example:
+app.use(morgan('combined'));
+app.use(cors());
 app.use(checkUserHeaders);
 app.use(checkExistingUser);
 
