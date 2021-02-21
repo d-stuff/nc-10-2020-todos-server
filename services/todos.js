@@ -1,5 +1,6 @@
 require('../file-db')
 const { getData, setData } = require('../file-db');
+const Todo = require('../models/todo');
 
 const TODOS_PATH = 'todos.json';
 
@@ -30,26 +31,19 @@ async function updateTodo(todoId, changes = {}) {
 	return todo;
 }
 
-async function getTodos(filters = {}) {
-	const todos = await getData(TODOS_PATH);
+function getTodos(filters = {}) {
+	const query = {};
+	if ('isDone' in filters) {
+		query.isDone = filters.isDone;
+	}
+	if ('content' in filters) {
+		query.content = new RegExp(filters.content, 'i');
+	}
+	if ('user' in filters) {
+		query.user = filters.user;
+	}
 
-	return todos.filter(todo => {
-		let result = true;
-		if ('isDone' in filters) {
-			result = todo.isDone === filters.isDone;
-		}
-		if (result && 'content' in filters) {
-			result = new RegExp(filters.content, 'i').test(todo.content);
-		}
-		if (result && 'id' in filters) {
-			result = todo.id === filters.id;
-		}
-		if (result && 'userId' in filters) {
-			result = todo.userId === filters.userId;
-		}
-
-		return result;
-	});
+	return Todo.find(query);
 }
 
 async function getTodo(todoId) {

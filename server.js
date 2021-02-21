@@ -1,12 +1,17 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 
-const jsonParser = bodyParser.json();
-const service = require('./services/todos');
-const { checkTodoPermissions } = require('./middlewares/todos');
+const todosRouter = require('./routes/todos');
 const { checkUserHeaders, checkExistingUser } = require('./middlewares/auth');
+const { connect } = require('./models');
+
+connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/todos')
+	.then(() => console.log('MONGODB is connected'))
+	.catch(() => {
+		console.log('MONGODB is not connected');
+		process.exit(1);
+	});
 
 const app = express();
 
@@ -16,34 +21,6 @@ app.use(cors());
 app.use(checkUserHeaders);
 app.use(checkExistingUser);
 
-app.get('/api/todos', async (req, res) => {
-	const filters = {
-		userId: req.user.id
-	};
-	if (req.query.isDone) {
-		filters.isDone = req.query.isDone === 'true';
-	}
-	if (req.query.content) {
-		filters.content = req.query.content;
-	}
+app.use(todosRouter);
 
-	const todos = await service.getTodos(filters);
-	res.json(todos);
-});
-
-app.delete('/api/todos/:todoId', checkTodoPermissions, async (req, res) => {
-	await service.removeTodo(req.todo.id);
-	res.json({ message: 'Todo removed successfully' });
-});
-
-app.post('/api/todos', jsonParser, async (req, res) => {
-	const newTodo = await service.addTodo({ ...req.body, userId: req.user.id });
-	res.json(newTodo);
-});
-
-app.put('/api/todos/:todoId', checkTodoPermissions, jsonParser, async (req, res) => {
-	const updatedTodo = await service.updateTodo(req.todo.id, {...req.body, userId: req.user.id});
-	res.json(updatedTodo);
-});
-
-app.listen(3000, () => console.log('Listening on http://localhost:3000'));
+app.listen(process.env.PORT || 3000, () => console.log('Listening on http://localhost:3000'));
