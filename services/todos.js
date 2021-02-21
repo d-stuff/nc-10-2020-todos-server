@@ -4,14 +4,9 @@ const Todo = require('../models/todo');
 
 const TODOS_PATH = 'todos.json';
 
-async function addTodo(todo) {
-	const todos = await getData(TODOS_PATH);
-	const newTodoId = todos[todos.length - 1].id + 1;
-	const newTodo = { ...todo, id: newTodoId };
-	todos.push(newTodo);
-	await setData(TODOS_PATH, todos);
-
-	return newTodo;
+function addTodo(todo) {
+	const newTodo = new Todo(todo);
+	return newTodo.save();
 }
 
 async function removeTodo(todoId) {

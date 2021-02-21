@@ -27,7 +27,7 @@ todosRouter.delete('/api/todos/:todoId', checkTodoPermissions, async (req, res) 
 });
 
 todosRouter.post('/api/todos', jsonParser, async (req, res) => {
-	const newTodo = await service.addTodo({ ...req.body, userId: req.user.id });
+	const newTodo = await service.addTodo({ ...req.body, user: req.user._id });
 	res.json(newTodo);
 });
 
