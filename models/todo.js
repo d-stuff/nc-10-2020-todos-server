@@ -12,7 +12,9 @@ const TodoSchema = new Schema({
 	},
 	user: {
 		type: ObjectId,
-		ref: 'user',
+		ref: 'User',
+		required: true,
+		index: true
 	},
 	created: {
 		type: Date,
@@ -22,5 +24,6 @@ const TodoSchema = new Schema({
 });
 
 const Todo = model('Todo', TodoSchema);
+
 
 module.exports = Todo;
