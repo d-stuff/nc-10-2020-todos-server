@@ -32,8 +32,21 @@ todosRouter.post('/api/todos', jsonParser, async (req, res) => {
 });
 
 todosRouter.put('/api/todos/:todoId', checkTodoPermissions, jsonParser, async (req, res) => {
-	const updatedTodo = await service.updateTodo(req.todo.id, { ...req.body, userId: req.user.id });
-	res.json(updatedTodo);
+	const todo = req.todo;
+	const { content, isDone } = req.body;
+
+	todo.updated = new Date();
+
+	if (typeof isDone === 'boolean') {
+		todo.isDone = isDone;
+	}
+	if (content) {
+		todo.content = content;
+	}
+
+	await todo.save();
+
+	res.json(todo);
 });
 
 module.exports = todosRouter;
