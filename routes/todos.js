@@ -22,7 +22,7 @@ todosRouter.get('/api/todos', async (req, res) => {
 });
 
 todosRouter.delete('/api/todos/:todoId', checkTodoPermissions, async (req, res) => {
-	await service.removeTodo(req.todo.id);
+	await req.todo.remove();
 	res.json({ message: 'Todo removed successfully' });
 });
 
